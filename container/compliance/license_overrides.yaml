@@ -409,6 +409,9 @@ overrides:
   - { ecosystem: python, name: sgl-deep-ep,                license: "MIT",          source: "SGLang DeepEP — https://github.com/sgl-project/DeepEP/blob/main/LICENSE" }
   - { ecosystem: python, name: webencodings,               license: "BSD-3-Clause", source: "webencodings upstream — https://github.com/gsnedders/python-webencodings/blob/master/LICENSE" }
 
+  # --- Sglang v0.5.22 — Python packages with missing license metadata ---
+  - { ecosystem: python, name: fastokens,                  license: "Apache-2.0",   source: "PyPI metadata empty; verified at https://github.com/crusoecloud/fastokens/blob/main/LICENSE" }
+
   # --- Sglang cuda12.9 — Go module additions (UNKNOWN from syft) ---
   # All well-known projects; syft can't run go-license-detector against
   # compiled binaries so license comes back UNKNOWN.
