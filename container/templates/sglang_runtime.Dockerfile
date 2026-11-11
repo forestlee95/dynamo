@@ -262,13 +262,17 @@ RUN --mount=type=bind,source=./container/deps/requirements.sglang.txt,target=/tm
 # equivalent purge in vllm_runtime.Dockerfile.
 {% if device == "cuda" %}
 RUN set -eux; \
-    # SGLang 0.5.21's runtime image installs Ubuntu's full GPL/LGPL ffmpeg
+    # SGLang's runtime image installs Ubuntu's full GPL/LGPL ffmpeg
     # dependency closure. Remove the packages (and their dpkg metadata) before
     # copying Dynamo's separately built VP9-only ffmpeg below. File deletion
     # alone is insufficient because the compliance generator inventories dpkg.
-    apt-get purge -y --auto-remove \
-        ffmpeg \
-        libwayland-server0; \
+    # libwayland-server0 is not present in every base image release, and
+    # purging an unknown package fails, so only purge it when installed.
+    PURGE_PKGS="ffmpeg"; \
+    if dpkg-query -W -f='${Status}' libwayland-server0 2>/dev/null | grep -q "install ok installed"; then \
+        PURGE_PKGS="${PURGE_PKGS} libwayland-server0"; \
+    fi; \
+    apt-get purge -y --auto-remove ${PURGE_PKGS}; \
     rm -rf /var/lib/apt/lists/*; \
     python3 -m pip uninstall --yes \
         av \
