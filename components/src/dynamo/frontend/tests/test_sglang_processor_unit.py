@@ -37,7 +37,6 @@ from sglang.srt.constrained.xgrammar_backend import (
 )
 from sglang.srt.function_call.function_call_parser import FunctionCallParser
 from sglang.srt.function_call.json_array_parser import JsonArrayParser
-from sglang.srt.utils.hf_transformers_utils import get_tokenizer
 
 import dynamo.frontend.sglang_prepost as sglang_prepost_module
 import dynamo.frontend.sglang_processor as sglang_processor_module
@@ -69,6 +68,7 @@ from dynamo.frontend.sglang_processor import (
     _preprocess_worker,
     _runtime_config_parser_name,
     _tokenizer_eos_token_ids,
+    get_tokenizer,
 )
 from dynamo.frontend.utils import (
     PreprocessError,
