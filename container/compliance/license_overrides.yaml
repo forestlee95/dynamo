@@ -412,6 +412,27 @@ overrides:
   # --- Sglang v0.5.23 — Python packages with missing license metadata ---
   - { ecosystem: python, name: fastokens,                  license: "Apache-2.0",   source: "PyPI metadata empty; verified at https://github.com/crusoecloud/fastokens/blob/main/LICENSE (wheel ships the Apache-2.0 LICENSE)" }
 
+  # --- Sglang nightly-dev-cu13-20261112-2c597c92 — dpkg packages with no parseable license ---
+  # The -dev base image's toolchain packages. Their copyright files are not in
+  # machine-readable format (or absent), so the dpkg generator reports UNKNOWN.
+  # Each value was read from the package's own copyright/license file in the image.
+  - { ecosystem: dpkg, name: gdrdrv-dkms,                 license: "MIT OR GPL-2.0-only", source: "/usr/src/gdrdrv-2.5.1/gdrdrv.c: MIT header, MODULE_LICENSE(\"Dual MIT/GPL\"); GDRCopy — https://github.com/NVIDIA/gdrcopy" }
+  - { ecosystem: dpkg, name: googletest,                  license: "BSD-3-Clause",        source: "/usr/share/doc/googletest/copyright (BSD-C3)" }
+  - { ecosystem: dpkg, name: libgtest-dev,                license: "BSD-3-Clause AND FSFAP", source: "/usr/share/doc/libgtest-dev/copyright (BSD-C3; GAP for build files)" }
+  - { ecosystem: dpkg, name: libpython3-dev,              license: "PSF-2.0",             source: "/usr/share/doc/libpython3-dev/copyright (Python license)" }
+  - { ecosystem: dpkg, name: python3-dev,                 license: "PSF-2.0",             source: "/usr/share/doc/python3/copyright (Python license)" }
+  - { ecosystem: dpkg, name: libxcb-xinerama0,            license: "X11",                 source: "/usr/share/doc/libxcb-xinerama0/copyright (MIT with the X name clause)" }
+  - { ecosystem: dpkg, name: libxcb-xinput0,              license: "X11",                 source: "/usr/share/doc/libxcb-xinput0/copyright (MIT with the X name clause)" }
+  - { ecosystem: dpkg, name: libxcb-xkb1,                 license: "X11",                 source: "/usr/share/doc/libxcb-xkb1/copyright (MIT with the X name clause)" }
+  - { ecosystem: dpkg, name: libxcomposite1,              license: "HPND-sell-variant",   source: "/usr/share/doc/libxcomposite1/copyright (Keith Packard permission notice)" }
+  - { ecosystem: dpkg, name: libxdamage1,                 license: "HPND-sell-variant",   source: "/usr/share/doc/libxdamage1/copyright (Keith Packard permission notice)" }
+  - { ecosystem: dpkg, name: libxinerama1,                license: "X11",                 source: "/usr/share/doc/libxinerama1/copyright (MIT with the Open Group / DEC name clauses)" }
+  - { ecosystem: dpkg, name: libxkbcommon-x11-0,          license: "X11 AND HPND",        source: "/usr/share/doc/libxkbcommon-x11-0/copyright (MIT with name clause; SGI/Digital permission notices)" }
+  - { ecosystem: dpkg, name: libxpm4,                     license: "X11",                 source: "/usr/share/doc/libxpm4/copyright (MIT with GROUPE BULL name clause)" }
+  - { ecosystem: dpkg, name: libxtst6,                    license: "HPND-sell-variant",   source: "/usr/share/doc/libxtst6/copyright (UniSoft / Open Group permission notice)" }
+  - { ecosystem: dpkg, name: nsight-systems-cli,          license: LicenseRef-NVIDIA-Proprietary, source: "/opt/nvidia/nsight-systems-cli/2026.4.1/EULA.txt (NVIDIA Nsight Systems EULA)" }
+  - { ecosystem: dpkg, name: nsight-systems-cli-2026.4.1, license: LicenseRef-NVIDIA-Proprietary, source: "/opt/nvidia/nsight-systems-cli/2026.4.1/EULA.txt (NVIDIA Nsight Systems EULA)" }
+
   # --- Sglang cuda12.9 — Go module additions (UNKNOWN from syft) ---
   # All well-known projects; syft can't run go-license-detector against
   # compiled binaries so license comes back UNKNOWN.

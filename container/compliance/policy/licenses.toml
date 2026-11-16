@@ -2820,3 +2820,699 @@ type = "native"
 name = "CRIU"
 allow = ["GPL-2.0-only"]
 reason = "Mere aggregation: standalone checkpoint/restore binary the snapshot-agent execs as a subprocess, not linked into Dynamo's Apache-2.0 code. COPYING ships at /legal/CRIU/COPYING; source available via the OSRB archive."
+
+# --- dpkg [[exceptions]] for the lmsysorg/sglang nightly-dev base image ---------
+# nightly-dev-cu13-20261112-2c597c92 ships a development toolchain (autotools,
+# gdb, gfortran, openmpi, Qt/GTK for Nsight, ...) that the -runtime images do
+# not. Generated from the denied tokens the licenses stage reported for this
+# base; GMI internal test image only.
+
+[[exceptions]]
+type = "dpkg"
+name = "at-spi2-common"
+allow = ["GPL-2.0-only", "LGPL-2.0-or-later", "LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "autoconf"
+allow = ["GPL-2.0-or-later", "GPL-3.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "automake"
+allow = ["GPL-2.0-or-later", "GPL-3.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "autopoint"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "autotools-dev"
+allow = ["GPL-3.0-only"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "bear"
+allow = ["GPL-3.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "bsdextrautils"
+allow = ["GPL-2.0-only", "GPL-2.0-or-later", "GPL-3.0-or-later", "LGPL-2.0-or-later", "LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "check"
+allow = ["LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "cloc"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "dbus-user-session"
+allow = ["GPL-2.0-or-later", "LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "dconf-gsettings-backend"
+allow = ["GPL-3.0-only", "LGPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "dconf-service"
+allow = ["GPL-3.0-only", "LGPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "debhelper"
+allow = ["GPL-2.0-or-later", "GPL-3.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "debugedit"
+allow = ["GPL-2.0-or-later", "GPL-3.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "dh-autoreconf"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "dh-strip-nondeterminism"
+allow = ["GPL-3.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "dkms"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "dwz"
+allow = ["GPL-2.0-or-later", "GPL-3.0-or-later", "LGPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "fakeroot"
+allow = ["GPL-3.0-only"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "gdb"
+allow = ["GPL-2.0-or-later", "GPL-3.0-or-later", "LGPL-2.0-or-later", "LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "gettext"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "gettext-base"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "gfortran-13"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "gfortran-13-x86-64-linux-gnu"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "groff-base"
+allow = ["GPL-3.0-only"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "gtk-update-icon-cache"
+allow = ["GPL-3.0-or-later", "LGPL-2.0-or-later", "LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "hicolor-icon-theme"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "htop"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "humanity-icon-theme"
+allow = ["GPL-2.0-only"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "intltool-debian"
+allow = ["GPL-2.0-only", "GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "kmod"
+allow = ["GPL-2.0-or-later", "LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libatk-bridge2.0-0t64"
+allow = ["GPL-2.0-only", "LGPL-2.0-or-later", "LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libatk1.0-0t64"
+allow = ["GPL-2.0-only", "LGPL-2.0-or-later", "LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libatspi2.0-0t64"
+allow = ["GPL-2.0-only", "LGPL-2.0-or-later", "LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libavahi-client3"
+allow = ["LGPL-2.1-only"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libavahi-common-data"
+allow = ["LGPL-2.1-only"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libavahi-common3"
+allow = ["LGPL-2.1-only"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libbabeltrace1"
+allow = ["GPL-2.0-only", "GPL-3.0-or-later", "LGPL-2.1-only"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libc-ares-dev"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libcolord2"
+allow = ["GPL-2.0-or-later", "LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libdconf1"
+allow = ["GPL-3.0-only", "LGPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libdebhelper-perl"
+allow = ["GPL-2.0-or-later", "GPL-3.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libdebuginfod-common"
+allow = ["GPL-2.0-or-later", "GPL-3.0-or-later", "LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libdebuginfod1t64"
+allow = ["GPL-2.0-or-later", "GPL-3.0-or-later", "LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libear"
+allow = ["GPL-3.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libegl1"
+allow = ["GPL-3.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libevdev2"
+allow = ["GPL-2.0-only", "GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libevent-2.1-7t64"
+allow = ["GPL-2.0-or-later", "GPL-3.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libevent-dev"
+allow = ["GPL-2.0-or-later", "GPL-3.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libevent-extra-2.1-7t64"
+allow = ["GPL-2.0-or-later", "GPL-3.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libevent-openssl-2.1-7t64"
+allow = ["GPL-2.0-or-later", "GPL-3.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libfakeroot"
+allow = ["GPL-3.0-only"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libfile-stripnondeterminism-perl"
+allow = ["GPL-3.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libgd3"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libgfortran-13-dev"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libgrpc++-dev"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libgrpc-dev"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libgtk-3-0t64"
+allow = ["GPL-3.0-or-later", "LGPL-2.0-or-later", "LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libgtk-3-common"
+allow = ["GPL-3.0-or-later", "LGPL-2.0-or-later", "LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libgudev-1.0-0"
+allow = ["LGPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libheif-plugin-aomdec"
+allow = ["GPL-3.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libheif1"
+allow = ["GPL-3.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libhwloc-dev"
+allow = ["GPL-3.0-only"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libinput-bin"
+allow = ["GPL-2.0-only"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libinput10"
+allow = ["GPL-2.0-only"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libjs-underscore"
+allow = ["GPL-3.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libjsoncpp-dev"
+allow = ["GPL-3.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libltdl-dev"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libltdl7"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "liblzma-dev"
+allow = ["GPL-2.0-only", "GPL-2.0-or-later", "LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libnl-genl-3-200"
+allow = ["GPL-2.0-only"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libnotify4"
+allow = ["LGPL-2.1-only"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libopenmpi-dev"
+allow = ["LGPL-2.0-only"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libpipeline1"
+allow = ["GPL-2.0-or-later", "GPL-3.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libpmix-dev"
+allow = ["LGPL-2.0-only"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libqt5core5t64"
+allow = ["GPL-2.0-only", "GPL-2.0-or-later", "GPL-3.0-only", "LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libqt5dbus5t64"
+allow = ["GPL-2.0-only", "GPL-2.0-or-later", "GPL-3.0-only", "LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libqt5gui5t64"
+allow = ["GPL-2.0-only", "GPL-2.0-or-later", "GPL-3.0-only", "LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libqt5network5t64"
+allow = ["GPL-2.0-only", "GPL-2.0-or-later", "GPL-3.0-only", "LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libqt5printsupport5t64"
+allow = ["GPL-2.0-only", "GPL-2.0-or-later", "GPL-3.0-only", "LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libqt5widgets5t64"
+allow = ["GPL-2.0-only", "GPL-2.0-or-later", "GPL-3.0-only", "LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libsource-highlight-common"
+allow = ["GPL-3.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libsource-highlight4t64"
+allow = ["GPL-3.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libsystemd-dev"
+allow = ["GPL-2.0-or-later", "LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libtirpc-common"
+allow = ["GPL-2.0-only", "LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libtirpc3t64"
+allow = ["GPL-2.0-only", "LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libtool"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libuchardet0"
+allow = ["GPL-2.0-or-later", "LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libunwind-dev"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libutempter0"
+allow = ["LGPL-2.1-only"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libwxbase3.2-1t64"
+allow = ["GPL-2.0-or-later", "GPL-3.0-or-later", "LGPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libwxgtk3.2-1t64"
+allow = ["GPL-2.0-or-later", "GPL-3.0-or-later", "LGPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libxcb-icccm4"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libxcb-image0"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libxcb-keysyms1"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libxcb-render-util0"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "libxcb-util1"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "lsof"
+allow = ["GPL-2.0-or-later", "LGPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "m4"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "man-db"
+allow = ["GPL-2.0-or-later", "GPL-3.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "mpi-default-bin"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "mpi-default-dev"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "openmpi-bin"
+allow = ["LGPL-2.0-only"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "openmpi-common"
+allow = ["LGPL-2.0-only"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "pahole"
+allow = ["GPL-2.0-only"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "patchutils"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "po-debconf"
+allow = ["GPL-2.0-only", "GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "protobuf-compiler-grpc"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "silversearcher-ag"
+allow = ["GPL-3.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "tree"
+allow = ["GPL-2.0-or-later", "LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "ubuntu-mono"
+allow = ["GPL-3.0-only"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "uuid-dev"
+allow = ["GPL-2.0-only", "GPL-2.0-or-later", "GPL-3.0-or-later", "LGPL-2.0-or-later", "LGPL-2.1-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "wdiff"
+allow = ["GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "zsh"
+allow = ["GPL-2.0-only", "GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
+
+[[exceptions]]
+type = "dpkg"
+name = "zsh-common"
+allow = ["GPL-2.0-only", "GPL-2.0-or-later"]
+reason = "Mere aggregation; dev tooling in the lmsysorg/sglang nightly-dev base image"
