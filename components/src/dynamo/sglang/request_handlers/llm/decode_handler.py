@@ -26,7 +26,6 @@ from dynamo.llm import HttpError
 from dynamo.llm.exceptions import EngineShutdown, InvalidArgument
 from dynamo.sglang._compat import (
     cache_salt_kwargs,
-    dp_rank_kwargs,
     filter_supported_async_generate_kwargs,
     prefill_dp_rank_kwargs,
     require_reasoning_kwargs,
@@ -775,7 +774,7 @@ class DecodeWorkerHandler(BaseWorkerHandler):
                 **prefill_dp_rank_kwargs(self.engine, routing.get("prefill_dp_rank")),
                 external_trace_header=trace_header,
                 rid=sglang_request_id,
-                **dp_rank_kwargs(self.engine, dp_rank),
+                routed_dp_rank=dp_rank,
                 lora_path=lora_path,
                 **logprob_kwargs,
                 **priority_kwargs,
@@ -875,7 +874,7 @@ class DecodeWorkerHandler(BaseWorkerHandler):
                 **mm_hashes_kwargs,
                 external_trace_header=trace_header,
                 rid=sglang_request_id,
-                **dp_rank_kwargs(self.engine, dp_rank),
+                routed_dp_rank=dp_rank,
                 lora_path=lora_path,
                 **logprob_kwargs,
                 **priority_kwargs,

@@ -2722,29 +2722,6 @@ def test_prefill_dp_rank_kwargs_follows_engine_signature():
     assert prefill_dp_rank_kwargs(OlderEngine(), 3) == {}
 
 
-def test_dp_rank_kwargs_follows_engine_signature():
-    from dynamo.sglang._compat import dp_rank_kwargs
-
-    class Engine:  # SGLang after 0.5.23: the deprecated alias is gone
-        async def async_generate(self, *, rid=None, routed_dp_rank=None):
-            pass
-
-    class BothEngine:  # SGLang 0.5.20-0.5.23
-        async def async_generate(
-            self, *, rid=None, routed_dp_rank=None, data_parallel_rank=None
-        ):
-            pass
-
-    class XpuEngine:  # XPU SGLang 0.5.11 pin
-        async def async_generate(self, *, rid=None, data_parallel_rank=None):
-            pass
-
-    assert dp_rank_kwargs(Engine(), 2) == {"routed_dp_rank": 2}
-    assert dp_rank_kwargs(BothEngine(), 2) == {"routed_dp_rank": 2}
-    assert dp_rank_kwargs(XpuEngine(), 2) == {"data_parallel_rank": 2}
-    assert dp_rank_kwargs(Engine(), None) == {}
-
-
 @pytest.mark.asyncio
 async def test_disagg_decode_passes_prefill_dp_rank_to_engine():
     handler = _new_decode_handler()

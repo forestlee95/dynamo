@@ -457,25 +457,6 @@ def prefill_dp_rank_kwargs(engine: Any, prefill_dp_rank: Any) -> dict[str, Any]:
     )
 
 
-def dp_rank_kwargs(engine: Any, dp_rank: Any) -> dict[str, Any]:
-    """Pass the router-chosen data-parallel rank to ``engine.async_generate``.
-
-    SGLang 0.5.20+ takes ``routed_dp_rank``; ``data_parallel_rank`` was its
-    deprecated alias and was removed after 0.5.23 (sgl-project/sglang b947a615f6),
-    so passing it now raises ``TypeError: unexpected keyword argument``.
-    """
-    if dp_rank is None:
-        return {}
-    kwargs = filter_supported_async_generate_kwargs(
-        engine, {"routed_dp_rank": int(dp_rank)}
-    )
-    if kwargs:
-        return kwargs
-    # Fallback for the XPU SGLang 0.5.11 pin, which predates routed_dp_rank.
-    # Remove when the XPU SGLang pin is upgraded to 0.5.20+.
-    return {"data_parallel_rank": int(dp_rank)}
-
-
 def require_reasoning_kwargs(
     engine: Any,
     request: Mapping[str, Any],
@@ -514,7 +495,6 @@ __all__ = [
     "ConfigArgumentMerger",
     "add_sglang_cli_compat",
     "cache_salt_kwargs",
-    "dp_rank_kwargs",
     "filter_supported_async_generate_kwargs",
     "get_encoder_preprocessor_modules",
     "get_mm_encoder_class",
