@@ -7,6 +7,7 @@
   - 下文路径：Dynamo 写相对仓库根目录的路径；SGLang 写 `sglang/srt/...`。行号基于上述版本，标“约”的行号改代码前请以函数名为准重新定位。
 - **说明**：本文是 GMI fork 内部的分析记录。文中 `out/…` 开头的路径指分析工作区 `obs-console-playground` 中的数据与脚本，未随本文提交。文中的地址和客户标识已脱敏：NLB 的两个 IP 记为 NLB-IP-1、NLB-IP-2，NLB 主机名记为 `nlb.example`，控制台记为 `obs-console.example`，forward-worker 的 pod IP 记为 pod-A1 这样的代号（字母相同表示 /24 网段相同；两个区域的网段有重叠，区域也相同才是同一节点），集群名只保留区域，客户 org ID 已删除。
 - **范围**：Dynamo 自身，包括 frontend、SGLang worker 集成，以及 SGLang 本身。链路问题（约 80% 的失败）只列 Dynamo 侧能配合的部分。
+- **执行版（2026-11-18）**：同目录的 `FIX_TASKS.md` 把本计划拆成 T01–T23 任务卡，含代表性例子、实跑复现和 issue/PR 草稿；复现材料在 `out/fix_repro/`。两者冲突时以 FIX_TASKS 为准，本文需要更正的 20 处见 FIX_TASKS 第 5 节（例如 E2/E3e/P0-2(e) 上游 main 已修，P0-2(f) 与 F5 取消 prefill 和上游现有设计冲突）。
 
 ---
 
