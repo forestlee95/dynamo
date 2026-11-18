@@ -5,7 +5,7 @@
   - Dynamo：`/workspace/codes/dynamo`，分支 `gmi/1.6.1-sglang-v0.5.23`（HEAD `06298b4b0`）。
   - SGLang：v0.5.23（xgrammar 0.2.7）。
   - 下文路径：Dynamo 写相对仓库根目录的路径；SGLang 写 `sglang/srt/...`。行号基于上述版本，标“约”的行号改代码前请以函数名为准重新定位。
-- **说明**：本文是 GMI fork 内部的分析记录。文中 `out/…` 开头的路径指分析工作区 `obs-console-playground` 中的数据与脚本，未随本文提交。
+- **说明**：本文是 GMI fork 内部的分析记录。文中 `out/…` 开头的路径指分析工作区 `obs-console-playground` 中的数据与脚本，未随本文提交。文中的地址和客户标识已脱敏：NLB 的两个 IP 记为 NLB-IP-1、NLB-IP-2，NLB 主机名记为 `nlb.example`，控制台记为 `obs-console.example`，forward-worker 的 pod IP 记为 pod-A1 这样的代号（字母相同表示 /24 网段相同；两个区域的网段有重叠，区域也相同才是同一节点），集群名只保留区域，客户 org ID 已删除。
 - **范围**：Dynamo 自身，包括 frontend、SGLang worker 集成，以及 SGLang 本身。链路问题（约 80% 的失败）只列 Dynamo 侧能配合的部分。
 
 ---
@@ -330,7 +330,7 @@
 
 ## 11. 每类一个例子（Dynamo 相关）
 
-trace 链接格式：`https://ie-log.gmi-serving.com/trace/<trace_id>`
+trace 链接格式：`https://obs-console.example/trace/<trace_id>`
 
 | 子类 | 对应工作项 | trace_id | 时间（UTC） | 关键证据 |
 |---|---|---|---|---|
