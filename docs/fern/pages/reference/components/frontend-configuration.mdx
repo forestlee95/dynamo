@@ -847,6 +847,25 @@ truthy value (`1`, `true`, `yes`, or `on`, case-insensitive) to disable the corr
   processor and backend checks, so a schema can still fail later in the request pipeline.
 </ParamField>
 
+<ParamField path="DYN_DISABLE_CHAT_REQUEST_SHAPE_REPAIR" type="boolean" default="false">
+  When truthy, the frontend stops repairing `/v1/chat/completions` bodies that fail to
+  deserialize and rejects them with HTTP 400. By default, a body that is valid JSON but does not
+  match the request schema is retried once after these exact rewrites: a flat function tool or
+  assistant tool call (`{"type":"function","name":...}`) is wrapped into `function`; a tool with a
+  `function` object and no `type` gets `"type":"function"`; `tool_choice` given as
+  `{"type":"auto"|"none"|"required"|"any"}`, `"any"`, `{"type":"function","name":...}`, or
+  `{"type":"tool","name":...}` becomes the standard form; `content: null` on a user or tool
+  message becomes `""`; an `input_text` content part becomes `text`; a tool call with
+  `"type":"tool_call"` becomes `function`; `response_format` given as `"text"`, `"json_object"`,
+  `"json"`, or `{"type":"json"}` becomes the standard object and an empty one is dropped;
+  `reasoning_effort: "mid"` becomes `medium`; and a `seed` above the signed 64-bit range is
+  folded into it. Each repaired
+  request logs one `WARN` line naming the rewrites. Requests that already conform are never
+  rewritten, and shapes without an exact equivalent (a tool type other than `function`, a `file`
+  content part, an unknown role) are still rejected. The value is captured during HTTP frontend
+  startup; restart the process after changing it.
+</ParamField>
+
 <ParamField path="DYN_DISABLE_FRONTEND_NVEXT" type="boolean" default="false">
   When truthy, the frontend drops all request NvExt fields except `cache_salt` on
   `/v1/chat/completions`, `/v1/completions`, `/v1/responses`, and `/v1/messages`; ignores the
