@@ -52,8 +52,9 @@ use tokio_util::sync::CancellationToken;
 use tower_http::trace::TraceLayer;
 
 use crate::frontend_config::{
-    ChatTemplateDefaults, DISABLE_OPENAI_STRICT_SCHEMA_VALIDATION, FrontendApiConfig,
-    MediaRejectionConfig, MetricsConfig,
+    ChatTemplateDefaults, DISABLE_CHAT_REQUEST_SHAPE_REPAIR,
+    DISABLE_OPENAI_STRICT_SCHEMA_VALIDATION, FrontendApiConfig, MediaRejectionConfig,
+    MetricsConfig,
 };
 
 /// Middleware that echoes `x-request-id` from request to response headers.
@@ -1577,6 +1578,7 @@ impl HttpServiceConfigBuilder {
         let config: HttpServiceConfig = self.build_internal()?;
         super::image_edits::validate_config()?;
         LazyLock::force(&DISABLE_OPENAI_STRICT_SCHEMA_VALIDATION);
+        LazyLock::force(&DISABLE_CHAT_REQUEST_SHAPE_REPAIR);
         let metrics_config = config.metrics_config.clone();
         let model_ready_metrics_prefix = metrics_config.prefix();
         let frontend_api_config = config.frontend_api_config.clone();

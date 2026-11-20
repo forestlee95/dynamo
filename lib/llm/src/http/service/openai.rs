@@ -56,6 +56,7 @@ use super::{
     service_v2::{self, BackendErrorCheck},
 };
 use crate::engines::ValidateRequest;
+use crate::frontend_config::DISABLE_CHAT_REQUEST_SHAPE_REPAIR;
 use crate::preprocessor::{
     PRESERVE_OMITTED_MAX_TOKENS_CONTEXT_KEY, REQUEST_PARSING_OPTIONS_CONTEXT_KEY,
     decode_base64_to_floats,
@@ -70,6 +71,7 @@ use crate::protocols::common::input_trigger::{
 };
 use crate::protocols::common::metadata_upload::UniqueJsonValue;
 use crate::protocols::openai::chat_completions::aggregator::ChatCompletionAggregator;
+use crate::protocols::openai::chat_completions::request_repair::repair_chat_request;
 use crate::protocols::openai::{
     MediaDelivery, ParsingOptions,
     audios::{NvAudioSpeechResponse, NvCreateAudioSpeechRequest},
@@ -2622,15 +2624,14 @@ async fn handler_chat_completions(
             return Err(error);
         }
     };
-    let mut request: NvCreateChatCompletionRequest =
-        match parse_json_request("chat completions", &body) {
-            Ok(request) => request,
-            Err(error) => {
-                lifecycle_request.record_session(&request_id, None);
-                terminal.finish(terminal_outcome_for_error_response(&error));
-                return Err(error);
-            }
-        };
+    let mut request: NvCreateChatCompletionRequest = match parse_chat_completion_request(&body) {
+        Ok(request) => request,
+        Err(error) => {
+            lifecycle_request.record_session(&request_id, None);
+            terminal.finish(terminal_outcome_for_error_response(&error));
+            return Err(error);
+        }
+    };
     if *FORCE_INCLUDE_USAGE && request.inner.stream.unwrap_or(false) {
         delta_common::force_include_usage(&mut request.inner.stream_options);
     }
@@ -2764,11 +2765,36 @@ pub(super) fn parse_json_request<T>(endpoint: &'static str, body: &[u8]) -> Resu
 where
     T: DeserializeOwned,
 {
-    match from_slice_dedup_reasoning(endpoint, body) {
+    parse_json_request_with(endpoint, body, None)
+}
+
+/// Rewrites a request body that failed to deserialize and returns the names of the
+/// rewrites applied, empty when it changed nothing.
+type ShapeRepair = fn(&mut serde_json::Value) -> Vec<&'static str>;
+
+/// Parses a `/v1/chat/completions` body, accepting the non-standard spellings listed in
+/// `chat_completions::request_repair` unless `DYN_DISABLE_CHAT_REQUEST_SHAPE_REPAIR` is set.
+fn parse_chat_completion_request(
+    body: &[u8],
+) -> Result<NvCreateChatCompletionRequest, ErrorResponse> {
+    let shape_repair =
+        (!*DISABLE_CHAT_REQUEST_SHAPE_REPAIR).then_some(repair_chat_request as ShapeRepair);
+    parse_json_request_with("chat completions", body, shape_repair)
+}
+
+fn parse_json_request_with<T>(
+    endpoint: &'static str,
+    body: &[u8],
+    shape_repair: Option<ShapeRepair>,
+) -> Result<T, ErrorResponse>
+where
+    T: DeserializeOwned,
+{
+    match from_slice_recovering(endpoint, body, shape_repair) {
         Ok(request) => Ok(request),
         Err(original_error) => {
             if let Some(escaped_body) = escape_json_string_control_chars(body) {
-                match from_slice_dedup_reasoning(endpoint, &escaped_body) {
+                match from_slice_recovering(endpoint, &escaped_body, shape_repair) {
                     Ok(request) => {
                         tracing::warn!(
                             endpoint,
@@ -2776,14 +2802,62 @@ where
                         );
                         Ok(request)
                     }
-                    Err(_) => parse_json_request_lossy(endpoint, body)
+                    Err(_) => parse_json_request_lossy(endpoint, body, shape_repair)
                         .map_err(|_| json_deserialize_error(original_error)),
                 }
             } else {
-                parse_json_request_lossy(endpoint, body)
+                parse_json_request_lossy(endpoint, body, shape_repair)
                     .map_err(|_| json_deserialize_error(original_error))
             }
         }
+    }
+}
+
+/// Deserialize `body`, retrying once after `shape_repair` when the body is valid JSON of
+/// the wrong shape. Every recovery path (control-character escaping, lossy UTF-8) goes
+/// through here, and the retry itself goes through the `reasoning` de-duplication, so a
+/// body needing several fixes still parses. The caller keeps the first error when the
+/// retry fails: its position refers to the body the client sent.
+fn from_slice_recovering<T>(
+    endpoint: &'static str,
+    body: &[u8],
+    shape_repair: Option<ShapeRepair>,
+) -> Result<T, serde_json::Error>
+where
+    T: DeserializeOwned,
+{
+    let error = match from_slice_dedup_reasoning(endpoint, body) {
+        Ok(request) => return Ok(request),
+        Err(error) => error,
+    };
+    let Some(shape_repair) = shape_repair else {
+        return Err(error);
+    };
+    if !error.is_data() {
+        return Err(error);
+    }
+    // `UniqueJsonValue` rather than `Value`, which would keep the last copy of a repeated
+    // key and so accept a body the typed parse rejects.
+    let Ok(UniqueJsonValue(mut value)) = serde_json::from_slice(body) else {
+        return Err(error);
+    };
+    let repairs = shape_repair(&mut value);
+    if repairs.is_empty() {
+        return Err(error);
+    }
+    let Ok(repaired_body) = serde_json::to_vec(&value) else {
+        return Err(error);
+    };
+    match from_slice_dedup_reasoning(endpoint, &repaired_body) {
+        Ok(request) => {
+            tracing::warn!(
+                endpoint,
+                ?repairs,
+                "Accepted request after rewriting non-standard fields into their standard form"
+            );
+            Ok(request)
+        }
+        Err(_) => Err(error),
     }
 }
 
@@ -2847,18 +2921,22 @@ fn drop_duplicate_reasoning(body: &[u8]) -> Option<Vec<u8>> {
     serde_json::to_vec(&value).ok()
 }
 
-fn parse_json_request_lossy<T>(endpoint: &'static str, body: &[u8]) -> Result<T, serde_json::Error>
+fn parse_json_request_lossy<T>(
+    endpoint: &'static str,
+    body: &[u8],
+    shape_repair: Option<ShapeRepair>,
+) -> Result<T, serde_json::Error>
 where
     T: DeserializeOwned,
 {
     let lossy_body = String::from_utf8_lossy(body);
     if lossy_body.as_bytes() == body {
-        return from_slice_dedup_reasoning(endpoint, body);
+        return from_slice_recovering(endpoint, body, shape_repair);
     }
 
     let escaped_body = escape_json_string_control_chars(lossy_body.as_bytes())
         .unwrap_or_else(|| lossy_body.into_owned().into_bytes());
-    let request = from_slice_dedup_reasoning(endpoint, &escaped_body)?;
+    let request = from_slice_recovering(endpoint, &escaped_body, shape_repair)?;
     tracing::warn!(
         endpoint,
         "Accepted request after replacing invalid UTF-8 and escaping unescaped control characters in JSON strings"
@@ -6767,6 +6845,199 @@ mod tests {
             "unexpected error: {}",
             err.1.message
         );
+    }
+
+    fn chat_shape_error(body: &[u8]) -> String {
+        match parse_chat_completion_request(body) {
+            Ok(_) => panic!(
+                "request should be rejected: {}",
+                String::from_utf8_lossy(body)
+            ),
+            Err(err) => {
+                assert_eq!(err.0, StatusCode::BAD_REQUEST);
+                err.1.message.clone()
+            }
+        }
+    }
+
+    #[test]
+    fn test_parse_chat_completion_request_repairs_nonstandard_shapes() {
+        let body = br#"{"model":"m","seed":10000000000000000000,"response_format":{},
+            "messages":[
+                {"role":"user","content":null},
+                {"role":"assistant","content":null,"tool_calls":[{"id":"c1","type":"function","name":"get_weather","arguments":"{\"city\":\"x\"}"}]},
+                {"role":"tool","tool_call_id":"c1","content":"ok"},
+                {"role":"user","content":[{"type":"input_text","text":"and now?"}]}
+            ],
+            "tools":[
+                {"type":"function","name":"get_weather","description":"d","parameters":{"type":"object","properties":{"city":{"type":"string"}}}},
+                {"function":{"name":"other"}}
+            ],
+            "tool_choice":{"type":"auto"}}"#;
+
+        let request = parse_chat_completion_request(body).expect("request should parse");
+        let value = serde_json::to_value(&request.inner).unwrap();
+
+        assert_eq!(
+            value["seed"],
+            10_000_000_000_000_000_000_u64 - (1_u64 << 63)
+        );
+        assert!(value.get("response_format").is_none_or(|v| v.is_null()));
+        assert_eq!(value["messages"][0]["content"], "");
+        assert_eq!(
+            value["messages"][1]["tool_calls"][0]["function"],
+            serde_json::json!({"name": "get_weather", "arguments": "{\"city\":\"x\"}"})
+        );
+        assert_eq!(value["messages"][3]["content"][0]["type"], "text");
+        assert_eq!(value["messages"][3]["content"][0]["text"], "and now?");
+        assert_eq!(value["tools"][0]["type"], "function");
+        assert_eq!(value["tools"][0]["function"]["name"], "get_weather");
+        assert_eq!(value["tools"][0]["function"]["description"], "d");
+        assert_eq!(
+            value["tools"][0]["function"]["parameters"]["properties"]["city"]["type"],
+            "string"
+        );
+        assert_eq!(value["tools"][1]["type"], "function");
+        assert_eq!(value["tools"][1]["function"]["name"], "other");
+        assert_eq!(value["tool_choice"], "auto");
+    }
+
+    #[test]
+    fn test_parse_chat_completion_request_repairs_renamed_values() {
+        let body = br#"{"model":"m","reasoning_effort":"mid","response_format":{"type":"json"},
+            "messages":[
+                {"role":"user","content":"hi"},
+                {"role":"assistant","content":null,"tool_calls":[{"id":"c1","type":"tool_call","function":{"name":"f","arguments":"{}"}}]},
+                {"role":"tool","tool_call_id":"c1","content":"ok"}
+            ]}"#;
+        let request = parse_chat_completion_request(body).expect("request should parse");
+        let value = serde_json::to_value(&request.inner).unwrap();
+        assert_eq!(value["reasoning_effort"], "medium");
+        assert_eq!(value["response_format"]["type"], "json_object");
+        assert_eq!(value["messages"][1]["tool_calls"][0]["type"], "function");
+
+        let body = br#"{"model":"m","response_format":"json_object","messages":[{"role":"user","content":"hi"}]}"#;
+        let request = parse_chat_completion_request(body).expect("request should parse");
+        let value = serde_json::to_value(&request.inner).unwrap();
+        assert_eq!(value["response_format"]["type"], "json_object");
+    }
+
+    #[test]
+    fn test_parse_chat_completion_request_repairs_tool_choice_spellings() {
+        let tools = r#""tools":[{"type":"function","function":{"name":"f"}}]"#;
+        let named = serde_json::json!({"type": "function", "function": {"name": "f"}});
+        for (tool_choice, expected) in [
+            (r#"{"type":"auto"}"#, serde_json::json!("auto")),
+            (r#"{"type":"none"}"#, serde_json::json!("none")),
+            (r#"{"type":"required"}"#, serde_json::json!("required")),
+            (r#"{"type":"any"}"#, serde_json::json!("required")),
+            (r#""any""#, serde_json::json!("required")),
+            (r#"{"type":"tool","name":"f"}"#, named.clone()),
+            (r#"{"type":"function","name":"f"}"#, named.clone()),
+        ] {
+            let body = format!(
+                r#"{{"model":"m","messages":[{{"role":"user","content":"hi"}}],{tools},"tool_choice":{tool_choice}}}"#
+            );
+            let request = parse_chat_completion_request(body.as_bytes())
+                .unwrap_or_else(|err| panic!("{tool_choice}: {}", err.1.message));
+            let value = serde_json::to_value(&request.inner).unwrap();
+            assert_eq!(value["tool_choice"], expected, "{tool_choice}");
+        }
+    }
+
+    #[test]
+    fn test_parse_chat_completion_request_keeps_rejecting_shapes_without_exact_equivalent() {
+        let user = r#"{"role":"user","content":"hi"}"#;
+        let flat_tool = r#"{"type":"function","name":"f"}"#;
+        for (body, expected) in [
+            // A tool type other than `function`: dropping it would change the request.
+            (
+                format!(
+                    r#"{{"model":"m","messages":[{user}],"tools":[{{"type":"openrouter:web_search"}}]}}"#
+                ),
+                "unknown variant `openrouter:web_search`",
+            ),
+            // A repairable tool next to one that is not: the first error is reported.
+            (
+                format!(
+                    r#"{{"model":"m","messages":[{user}],"tools":[{flat_tool},{{"type":"web_search"}}]}}"#
+                ),
+                "missing field `function`",
+            ),
+            // Anthropic tool spelling: wrapping it would drop `input_schema`.
+            (
+                format!(
+                    r#"{{"model":"m","messages":[{user}],"tools":[{{"type":"function","name":"f","input_schema":{{}}}}]}}"#
+                ),
+                "missing field `function`",
+            ),
+            (
+                format!(
+                    r#"{{"model":"m","messages":[{{"role":"user","content":[{{"type":"file","file":{{"file_id":"f1"}}}}]}}]}}"#
+                ),
+                "ChatCompletionRequestUserMessageContent",
+            ),
+            (
+                format!(r#"{{"model":"m","messages":[{{"role":"agent","content":"hi"}}]}}"#),
+                "unknown variant `agent`",
+            ),
+            (
+                format!(
+                    r#"{{"model":"m","messages":[{user}],"tool_choice":{{"type":"auto","disable_parallel_tool_use":true}}}}"#
+                ),
+                "ChatCompletionToolChoiceOption",
+            ),
+            // A repeated key is still an error on the repair path.
+            (
+                format!(r#"{{"model":"m","messages":[{user}],"tools":[{flat_tool}],"model":"n"}}"#),
+                "missing field `function`",
+            ),
+        ] {
+            let message = chat_shape_error(body.as_bytes());
+            assert!(
+                message.starts_with("Failed to deserialize the JSON body into the target type: ")
+                    && message.contains(expected),
+                "{body}: {message}"
+            );
+        }
+    }
+
+    #[test]
+    fn test_parse_json_request_without_shape_repair_rejects_nonstandard_shapes() {
+        // What `DYN_DISABLE_CHAT_REQUEST_SHAPE_REPAIR` selects, and what every other
+        // endpoint gets.
+        let body = br#"{"model":"m","messages":[{"role":"user","content":"hi"}],"tools":[{"type":"function","name":"f"}]}"#;
+        let err =
+            match parse_json_request::<NvCreateChatCompletionRequest>("chat completions", body) {
+                Ok(_) => panic!("request should be rejected"),
+                Err(err) => err,
+            };
+        assert_eq!(err.0, StatusCode::BAD_REQUEST);
+        assert!(
+            err.1.message.contains("missing field `function`"),
+            "unexpected error: {}",
+            err.1.message
+        );
+    }
+
+    #[test]
+    fn test_parse_chat_completion_request_repairs_shape_with_other_recoveries() {
+        // Raw newline in a string, duplicate reasoning, and a flat tool in one body.
+        let body = b"{\"model\":\"m\",\"messages\":[{\"role\":\"user\",\"content\":\"line1\nline2\"},{\"role\":\"assistant\",\"content\":\"a\",\"reasoning\":\"r1\",\"reasoning_content\":\"r2\"},{\"role\":\"user\",\"content\":null}],\"tools\":[{\"type\":\"function\",\"name\":\"f\"}]}";
+        let request = parse_chat_completion_request(body).expect("request should parse");
+        let value = serde_json::to_value(&request.inner).unwrap();
+        assert_eq!(value["messages"][0]["content"], "line1\nline2");
+        assert_eq!(value["messages"][1]["reasoning_content"], "r2");
+        assert_eq!(value["messages"][2]["content"], "");
+        assert_eq!(value["tools"][0]["function"]["name"], "f");
+
+        // Invalid UTF-8 and a flat tool.
+        let mut body = br#"{"model":"m","messages":[{"role":"user","content":"bad "#.to_vec();
+        body.push(0xff);
+        body.extend_from_slice(br#" byte"}],"tools":[{"type":"function","name":"f"}]}"#);
+        let request = parse_chat_completion_request(&body).expect("request should parse");
+        let value = serde_json::to_value(&request.inner).unwrap();
+        assert_eq!(value["tools"][0]["function"]["name"], "f");
     }
 
     #[test]

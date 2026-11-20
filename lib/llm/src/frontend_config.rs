@@ -25,6 +25,11 @@ use crate::reasoning_field::ReasoningField;
 pub(crate) static DISABLE_OPENAI_STRICT_SCHEMA_VALIDATION: LazyLock<bool> =
     LazyLock::new(|| env_is_truthy(env_llm::DYN_DISABLE_OPENAI_STRICT_SCHEMA_VALIDATION));
 
+/// Process-wide switch for chat completions request shape repairs, initialized before the
+/// HTTP service accepts requests.
+pub(crate) static DISABLE_CHAT_REQUEST_SHAPE_REPAIR: LazyLock<bool> =
+    LazyLock::new(|| env_is_truthy(env_llm::DYN_DISABLE_CHAT_REQUEST_SHAPE_REPAIR));
+
 /// Metrics naming controls for frontend-owned services.
 ///
 /// Contains the optional metric name prefix resolved from `--metrics-prefix` or

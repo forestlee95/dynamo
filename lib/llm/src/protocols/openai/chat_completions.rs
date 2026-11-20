@@ -23,6 +23,7 @@ use crate::protocols::common::extensions::{
 pub mod aggregator;
 pub(crate) mod custom_tools;
 mod delta;
+pub(crate) mod request_repair;
 pub mod tool_parser_v2;
 pub(crate) mod unified_parser;
 

@@ -451,6 +451,12 @@ pub mod llm {
     pub const DYN_DISABLE_OPENAI_STRICT_SCHEMA_VALIDATION: &str =
         "DYN_DISABLE_OPENAI_STRICT_SCHEMA_VALIDATION";
 
+    /// Turn off the shape repairs applied to a `/v1/chat/completions` body that failed
+    /// to deserialize (flat function tools, object-form `tool_choice`, `content: null`,
+    /// and similar exact rewrites). Repairs are **enabled by default**; when this is
+    /// truthy such bodies are rejected with HTTP 400 as before.
+    pub const DYN_DISABLE_CHAT_REQUEST_SHAPE_REPAIR: &str = "DYN_DISABLE_CHAT_REQUEST_SHAPE_REPAIR";
+
     /// Master switch for the frontend's HTTP admin API surface.
     /// The admin API is **disabled by default**. Truthy values (`1` / `true` / `yes` /
     /// `on`, case-insensitive) start the admin listener (see `DYN_FRONTEND_ADMIN_HOST` /
@@ -1245,6 +1251,7 @@ mod tests {
             llm::DYN_DISABLE_FRONTEND_NVEXT,
             llm::DYN_IGNORE_OPENAI_FE_UNSUPPORTED_FIELDS,
             llm::DYN_DISABLE_OPENAI_STRICT_SCHEMA_VALIDATION,
+            llm::DYN_DISABLE_CHAT_REQUEST_SHAPE_REPAIR,
             llm::DYN_ENABLE_FRONTEND_ADMIN_API,
             llm::DYN_FRONTEND_ADMIN_HOST,
             llm::DYN_FRONTEND_ADMIN_PORT,
