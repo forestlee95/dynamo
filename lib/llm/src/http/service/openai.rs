@@ -6704,13 +6704,12 @@ mod tests {
                 "missing field `function`",
             ),
             (
-                format!(
-                    r#"{{"model":"m","messages":[{{"role":"user","content":[{{"type":"file","file":{{"file_id":"f1"}}}}]}}]}}"#
-                ),
+                r#"{"model":"m","messages":[{"role":"user","content":[{"type":"file","file":{"file_id":"f1"}}]}]}"#
+                    .to_string(),
                 "ChatCompletionRequestUserMessageContent",
             ),
             (
-                format!(r#"{{"model":"m","messages":[{{"role":"agent","content":"hi"}}]}}"#),
+                r#"{"model":"m","messages":[{"role":"agent","content":"hi"}]}"#.to_string(),
                 "unknown variant `agent`",
             ),
             (
