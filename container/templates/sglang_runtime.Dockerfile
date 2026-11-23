@@ -336,6 +336,10 @@ RUN set -eux; \
 RUN --mount=type=bind,from=ghcr.io/astral-sh/uv:0.13.6,source=/,target=/tmp/uv-python \
     set -eu; \
     export UV_NO_CACHE=1 UV_PYTHON_INSTALL_DIR=/opt/python; \
+    # Bases from v0.5.23 on set ENV UV_PYTHON_PREFERENCE=only-managed, which uv
+    # rejects alongside --managed-python. Drop it for this step only; the image
+    # ENV is unchanged.
+    unset UV_PYTHON_PREFERENCE; \
     /tmp/uv-python/uv python install --no-bin 3.12.16; \
     /tmp/uv-python/uv venv --allow-existing --managed-python --python 3.12 /opt/sglang; \
     check='import sys; print(sys.argv[1], sys.version.split()[0], sys.prefix); sys.exit(0 if sys.version_info[:3] == (3, 12, 16) and sys.prefix == "/opt/sglang" else 1)'; \
