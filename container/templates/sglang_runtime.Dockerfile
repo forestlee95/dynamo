@@ -340,15 +340,30 @@ RUN --mount=type=bind,from=ghcr.io/astral-sh/uv:0.13.6,source=/,target=/tmp/uv-p
     /tmp/uv-python/uv venv --allow-existing --managed-python --python 3.12 /opt/sglang; \
     check='import sys; print(sys.argv[1], sys.version.split()[0], sys.prefix); sys.exit(0 if sys.version_info[:3] == (3, 12, 16) and sys.prefix == "/opt/sglang" else 1)'; \
     /opt/sglang/bin/python -c "$check" /opt/sglang/bin/python; \
-    DEBIAN_FRONTEND=noninteractive apt-get purge -y \
+    # Bases from v0.5.23 on already ship this layout: no Ubuntu python3.12
+    # packages and no python3 alternatives group. apt-get purge fails on a
+    # package that is neither installed nor in the (already removed) apt lists,
+    # and update-alternatives --remove-all fails on a missing group, so act only
+    # on what the base actually has. The checks below still assert the result.
+    PURGE_PKGS=""; \
+    for pkg in \
         libpython3.12-minimal \
         libpython3.12-stdlib \
         libpython3.12t64 \
         python3-pip-whl \
         python3-setuptools-whl \
         python3.12 \
-        python3.12-minimal; \
-    update-alternatives --remove-all python3; \
+        python3.12-minimal; do \
+        if dpkg-query -W -f='${Status}' "$pkg" 2>/dev/null | grep -q "install ok installed"; then \
+            PURGE_PKGS="${PURGE_PKGS} ${pkg}"; \
+        fi; \
+    done; \
+    if [ -n "${PURGE_PKGS}" ]; then \
+        DEBIAN_FRONTEND=noninteractive apt-get purge -y ${PURGE_PKGS}; \
+    fi; \
+    if update-alternatives --query python3 >/dev/null 2>&1; then \
+        update-alternatives --remove-all python3; \
+    fi; \
     rm -f /usr/bin/python /usr/bin/python3; \
     printf '#!/bin/sh\nexec /opt/sglang/bin/python "$@"\n' > /usr/bin/python3; \
     chmod 0755 /usr/bin/python3; \
